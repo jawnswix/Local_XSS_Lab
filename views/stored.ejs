@@ -1,14 +1,38 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Stored XSS</title><link rel="stylesheet" href="/style.css"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Stored XSS</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/levels.css"></head>
 <body><main class="wrap">
-  <a href="/">← Lab home</a><p class="eyebrow">CHALLENGE 02</p><h1>Stored XSS</h1>
-  <p>Comments are saved to a local SQLite database and displayed on this page.</p>
-  <form method="POST" action="/stored"><label for="body">Comment</label><textarea id="body" name="body" maxlength="2000" rows="4" placeholder="Write a training comment"></textarea><button>Save comment</button></form>
-  <form method="POST" action="/reset" class="reset" onsubmit="return confirm('Delete all lab comments?')"><button class="secondary">Reset comments</button></form>
+  <a href="/">← Lab home</a><p class="eyebrow">STORED XSS</p><div class="level-badge <%= level %>"><%= level %> level</div><h1>Stored XSS</h1>
+  <nav class="level-nav" aria-label="Stored XSS difficulty levels">
+    <a class="<%= level === 'easy' ? 'selected' : '' %>" href="/stored?level=easy">Easy</a>
+    <a class="<%= level === 'medium' ? 'selected' : '' %>" href="/stored?level=medium">Medium</a>
+    <a class="<%= level === 'hard' ? 'selected' : '' %>" href="/stored?level=hard">Hard</a>
+  </nav>
+  <% if (level === "easy") { %>
+    <p><strong>Objective:</strong> find a saved comment rendered directly into the HTML body.</p>
+  <% } else if (level === "medium") { %>
+    <p><strong>Objective:</strong> trace saved comment data into a quoted HTML attribute.</p>
+  <% } else { %>
+    <p><strong>Objective:</strong> trace saved comment data into a JavaScript string in the response.</p>
+  <% } %>
+  <form method="POST" action="/stored"><input type="hidden" name="level" value="<%= level %>"><label for="body">Comment</label><textarea id="body" name="body" maxlength="2000" rows="4" placeholder="Write a training comment"></textarea><button>Save comment</button></form>
+  <form method="POST" action="/reset" class="reset" onsubmit="return confirm('Delete all lab comments?')"><input type="hidden" name="level" value="<%= level %>"><button class="secondary">Reset comments</button></form>
   <h2>Saved comments</h2>
   <% if (!comments.length) { %><p class="muted">No comments yet.</p><% } %>
-  <% comments.forEach(comment => { %>
-    <article class="comment"><p><%- comment.body %></p><small>Saved: <%= comment.created_at %></small></article>
-  <% }) %>
-  <details><summary>Learning notes</summary><p>This route intentionally renders saved comments as raw HTML. A harmless test payload is <code>&lt;script&gt;alert('Stored XSS')&lt;/script&gt;</code>. Reset comments after testing.</p></details>
+  <% if (level === "easy") { %>
+    <% comments.forEach(comment => { %>
+      <article class="comment"><p><%- comment.body %></p><small>Saved: <%= comment.created_at %></small></article>
+    <% }) %>
+  <% } else if (level === "medium") { %>
+    <% comments.forEach(comment => { %>
+      <article class="comment"><div class="unsafe-output" data-comment="<%- comment.body %>"><%= comment.body %></div><small>Saved: <%= comment.created_at %></small></article>
+    <% }) %>
+  <% } else { %>
+    <section class="result"><h3>Script-generated comment preview</h3><div id="stored-preview" class="unsafe-output"></div></section>
+    <script>
+      const savedComments = [<%- comments.map(comment => "'" + comment.body + "'").join(",") %>];
+      document.getElementById("stored-preview").textContent = savedComments.join("\n");
+    </script>
+    <% comments.forEach(comment => { %><small>Saved: <%= comment.created_at %></small><% }) %>
+  <% } %>
+  <details><summary>Learning notes</summary><p>Each level stores the same comment data but renders it in a different context. Compare HTML body, HTML attribute, and JavaScript string contexts. Reset comments after testing and use harmless proof-of-execution payloads only.</p></details>
 </main></body></html>

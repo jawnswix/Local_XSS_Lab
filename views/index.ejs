@@ -2,17 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Local XSS Lab</title><link rel="stylesheet" href="/style.css">
+  <title>Local XSS Lab</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/levels.css">
 </head>
 <body>
   <main class="wrap">
     <header><p class="eyebrow">LOCAL TRAINING ENVIRONMENT</p><h1>XSS Vulnerability Lab</h1>
-      <p>Practice finding and explaining reflected, stored, and DOM-based XSS.</p></header>
+      <p>Practice all three XSS topics at easy, medium, and hard difficulty.</p></header>
     <div class="notice"><strong>Safety boundary:</strong> this lab binds to 127.0.0.1. Use harmless proof-of-execution payloads and never test systems without permission.</div>
     <section class="cards">
-      <article><span class="tag">Challenge 01</span><h2>Reflected XSS</h2><p>Trace a URL parameter into the HTML response.</p><a href="/reflected?q=hello">Open challenge →</a></article>
-      <article><span class="tag">Challenge 02</span><h2>Stored XSS</h2><p>Submit a comment and see how saved content is rendered.</p><a href="/stored">Open challenge →</a></article>
-      <article><span class="tag">Challenge 03</span><h2>DOM-based XSS</h2><p>Follow URL fragment data into a browser DOM sink.</p><a href="/dom">Open challenge →</a></article>
+      <article class="difficulty-card"><h2>Reflected XSS</h2><p>Trace request data into different HTML and JavaScript contexts.</p><ul class="level-links">
+        <li><a class="level-link easy" href="/reflected?level=easy">Easy — HTML body</a></li>
+        <li><a class="level-link medium" href="/reflected?level=medium">Medium — HTML attribute</a></li>
+        <li><a class="level-link hard" href="/reflected?level=hard">Hard — JavaScript string</a></li>
+      </ul></article>
+      <article class="difficulty-card"><h2>Stored XSS</h2><p>Follow saved comments as they are rendered in progressively more complex contexts.</p><ul class="level-links">
+        <li><a class="level-link easy" href="/stored?level=easy">Easy — HTML body</a></li>
+        <li><a class="level-link medium" href="/stored?level=medium">Medium — HTML attribute</a></li>
+        <li><a class="level-link hard" href="/stored?level=hard">Hard — JavaScript string</a></li>
+      </ul></article>
+      <article class="difficulty-card"><h2>DOM-based XSS</h2><p>Trace browser-controlled URL data into client-side HTML sinks.</p><ul class="level-links">
+        <li><a class="level-link easy" href="/dom?level=easy">Easy — fragment to HTML</a></li>
+        <li><a class="level-link medium" href="/dom?level=medium">Medium — fragment to attribute</a></li>
+        <li><a class="level-link hard" href="/dom?level=hard">Hard — query to HTML after decoding</a></li>
+      </ul></article>
     </section>
     <h2>Hunter workflow</h2>
     <ol><li>Identify input sources: query strings, forms, URL fragments.</li><li>Trace where input goes: HTML, attributes, JavaScript, or DOM sinks.</li><li>Test only with harmless proof-of-execution payloads.</li><li>Record impact, reproduction steps, and a remediation.</li></ol>

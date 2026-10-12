@@ -1,0 +1,10 @@
+.level-links{list-style:none;padding:0;margin:12px 0 0}
+.level-links li{margin:8px 0;line-height:1.5}
+.level-link{display:block;padding:10px 12px;border:1px solid #dce4ef;border-radius:8px;text-decoration:none;background:#fff}
+.level-link.easy{border-left:4px solid #1ea96d}
+.level-link.medium{border-left:4px solid #d28d19}
+.level-link.hard{border-left:4px solid #d14a4a}
+.difficulty-card:nth-child(1),.difficulty-card:nth-child(2),.difficulty-card:nth-child(3){border-top-color:#dfeaf8}
+.level-nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.level-nav a{padding:8px 14px;border:1px solid #dce4ef;border-radius:999px;background:#fff;text-decoration:none}
+.level-nav a.selected{background:#102944;color:#fff;border-color:#102944}

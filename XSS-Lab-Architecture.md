@@ -28,14 +28,22 @@ flowchart LR
 | Database | SQLite | Stores submitted comments for Stored XSS practice |
 | Container (optional) | Docker Compose | Runs the lab in an isolated local container |
 
-## 2. Challenges
+## 2. Challenge levels
 
-| # | Challenge | Route | Learning objective |
+Each topic contains all three levels, progressing through different output contexts and data flows.
+
+| Topic | Level | Route | Learning objective |
 |---|---|---|---|
-| 1 | Reflected XSS | `/reflected?q=hello` | Trace a URL parameter into an HTML response |
-| 2 | Stored XSS | `/stored` | Understand how saved user input can execute when rendered |
-| 3 | DOM-based XSS | `/dom` | Trace URL fragment data into a browser DOM sink |
-| 4 | Remediation | All routes | Fix the issue with context-appropriate output encoding and safe DOM APIs |
+| Reflected XSS | Easy | `/reflected?level=easy` | Trace query input into an HTML body |
+| Reflected XSS | Medium | `/reflected?level=medium` | Inspect query input in an HTML attribute |
+| Reflected XSS | Hard | `/reflected?level=hard` | Trace query input into a JavaScript string |
+| Stored XSS | Easy | `/stored?level=easy` | Understand saved input rendered in an HTML body |
+| Stored XSS | Medium | `/stored?level=medium` | Inspect saved input in an HTML attribute |
+| Stored XSS | Hard | `/stored?level=hard` | Trace saved input into a JavaScript string |
+| DOM-based XSS | Easy | `/dom?level=easy` | Follow a URL fragment into an HTML sink |
+| DOM-based XSS | Medium | `/dom?level=medium` | Follow a fragment into a dynamically built HTML attribute |
+| DOM-based XSS | Hard | `/dom?level=hard` | Trace a query parameter through decoding into an HTML sink |
+| Remediation | All levels | All routes | Fix the issue with context-appropriate output encoding and safe DOM APIs |
 
 ## 3. Project structure
 
@@ -49,7 +57,8 @@ xss-vulnerability-lab/
 ├── .gitignore
 ├── lab.sqlite                 # created at runtime; ignored by Git
 ├── public/
-│   └── style.css
+│   ├── style.css
+│   └── levels.css
 └── views/
     ├── index.ejs
     ├── reflected.ejs
@@ -76,9 +85,9 @@ npm start
 Open the lab:
 
 - Homepage: <http://127.0.0.1:3000>
-- Reflected XSS: <http://127.0.0.1:3000/reflected?q=hello>
-- Stored XSS: <http://127.0.0.1:3000/stored>
-- DOM XSS: <http://127.0.0.1:3000/dom>
+- Reflected XSS levels: <http://127.0.0.1:3000/reflected?level=easy>, `?level=medium`, and `?level=hard`
+- Stored XSS levels: <http://127.0.0.1:3000/stored?level=easy>, `?level=medium`, and `?level=hard`
+- DOM XSS levels: <http://127.0.0.1:3000/dom?level=easy>, `?level=medium`, and `?level=hard`
 
 ### Optional Docker setup
 

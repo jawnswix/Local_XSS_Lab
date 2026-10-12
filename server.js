@@ -5,6 +5,11 @@ const sqlite3 = require("sqlite3").verbose();
 const app = express();
 const HOST = "127.0.0.1";
 const PORT = 3000;
+const LEVELS = ["easy", "medium", "hard"];
+
+function getLevel(value) {
+  return LEVELS.includes(value) ? value : "easy";
+}
 
 // Safety: bind only to loopback. Do not expose this training app to a LAN or the internet.
 app.set("view engine", "ejs");
@@ -30,7 +35,7 @@ app.get("/", (req, res) => res.render("index"));
  */
 app.get("/reflected", (req, res) => {
   const q = typeof req.query.q === "string" ? req.query.q : "";
-  res.render("reflected", { q });
+  res.render("reflected", { q, level: getLevel(req.query.level) });
 });
 
 /*
@@ -40,27 +45,29 @@ app.get("/reflected", (req, res) => {
 app.get("/stored", (req, res) => {
   db.all("SELECT id, body, created_at FROM comments ORDER BY id DESC", [], (err, rows) => {
     if (err) return res.status(500).send("Database error");
-    res.render("stored", { comments: rows });
+    res.render("stored", { comments: rows, level: getLevel(req.query.level) });
   });
 });
 
 app.post("/stored", (req, res) => {
   const body = typeof req.body.body === "string" ? req.body.body.slice(0, 2000) : "";
-  if (!body.trim()) return res.redirect("/stored");
+  const level = getLevel(req.body.level);
+  if (!body.trim()) return res.redirect(`/stored?level=${level}`);
   db.run("INSERT INTO comments (body) VALUES (?)", [body], (err) => {
     if (err) return res.status(500).send("Database error");
-    res.redirect("/stored");
+    res.redirect(`/stored?level=${level}`);
   });
 });
 
 app.post("/reset", (req, res) => {
+  const level = getLevel(req.body.level);
   db.run("DELETE FROM comments", [], (err) => {
     if (err) return res.status(500).send("Database error");
-    res.redirect("/stored");
+    res.redirect(`/stored?level=${level}`);
   });
 });
 
-app.get("/dom", (req, res) => res.render("dom"));
+app.get("/dom", (req, res) => res.render("dom", { level: getLevel(req.query.level) }));
 
 app.get("/health", (_req, res) => res.json({ status: "ok", localOnly: true }));
 

@@ -1,14 +1,34 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>DOM XSS</title><link rel="stylesheet" href="/style.css"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>DOM XSS</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/levels.css"></head>
 <body><main class="wrap">
-  <a href="/">← Lab home</a><p class="eyebrow">CHALLENGE 03</p><h1>DOM-based XSS</h1>
-  <p>This page reads the URL fragment and inserts it into the DOM using <code>innerHTML</code>.</p>
-  <p>Try adding <code>#hello</code> to the URL, then inspect how the page uses it.</p>
-  <section class="result"><h2>Fragment output</h2><div id="output" class="unsafe-output">Nothing loaded yet.</div></section>
-  <details><summary>Learning notes</summary><p>Try a harmless payload such as <code>#&lt;img src=x onerror=alert('DOM-XSS')&gt;</code>. The fragment is processed in the browser and is not sent to the server in the HTTP request.</p></details>
+  <a href="/">← Lab home</a><p class="eyebrow">DOM-BASED XSS</p><div class="level-badge <%= level %>"><%= level %> level</div><h1>DOM-based XSS</h1>
+  <nav class="level-nav" aria-label="DOM-based XSS difficulty levels">
+    <a class="<%= level === 'easy' ? 'selected' : '' %>" href="/dom?level=easy">Easy</a>
+    <a class="<%= level === 'medium' ? 'selected' : '' %>" href="/dom?level=medium">Medium</a>
+    <a class="<%= level === 'hard' ? 'selected' : '' %>" href="/dom?level=hard">Hard</a>
+  </nav>
+  <% if (level === "easy") { %>
+    <p><strong>Objective:</strong> follow the URL fragment directly into an HTML sink.</p>
+  <% } else if (level === "medium") { %>
+    <p><strong>Objective:</strong> follow fragment data into an HTML attribute built in the browser.</p>
+  <% } else { %>
+    <p><strong>Objective:</strong> trace a query parameter through URL decoding before it reaches an HTML sink.</p>
+  <% } %>
+  <p>Inspect the browser-side source and sink. URL fragments are processed by the browser and are not sent to the server.</p>
+  <section class="result"><h2>DOM output</h2><div id="output" class="unsafe-output">Nothing loaded yet.</div></section>
+  <details><summary>Learning notes</summary><p>Compare the fragment-to-body, fragment-to-attribute, and decoded query-to-body flows. Identify each source, transformation, and sink. Use harmless proof-of-execution payloads only.</p></details>
   <script>
     // INTENTIONALLY VULNERABLE: for local training only.
-    const fragment = decodeURIComponent(location.hash.slice(1));
-    if (fragment) document.getElementById("output").innerHTML = fragment;
+    const output = document.getElementById("output");
+    <% if (level === "easy") { %>
+      const fragment = location.hash.slice(1);
+      if (fragment) output.innerHTML = fragment;
+    <% } else if (level === "medium") { %>
+      const fragment = location.hash.slice(1);
+      if (fragment) output.innerHTML = '<div data-fragment="' + fragment + '">Fragment preview</div>';
+    <% } else { %>
+      const encodedMessage = new URLSearchParams(location.search).get("message") || "";
+      if (encodedMessage) output.innerHTML = decodeURIComponent(encodedMessage);
+    <% } %>
   </script>
 </main></body></html>

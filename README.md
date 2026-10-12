@@ -31,11 +31,17 @@ docker compose up --build
 
 The published port is explicitly bound to loopback (`127.0.0.1:3000`).
 
-## Challenges
+## Challenges and difficulty levels
 
-1. **Reflected XSS** — `/reflected?q=hello`: trace a query parameter into an HTML response.
-2. **Stored XSS** — `/stored`: submit a comment that is stored in SQLite and rendered later.
-3. **DOM-based XSS** — `/dom`: follow the URL fragment into the `innerHTML` sink.
+Each XSS topic has its own Easy, Medium, and Hard challenge:
+
+| Topic | Easy | Medium | Hard |
+|---|---|---|---|
+| Reflected XSS | `/reflected?level=easy` — HTML body | `/reflected?level=medium` — HTML attribute | `/reflected?level=hard` — JavaScript string |
+| Stored XSS | `/stored?level=easy` — HTML body | `/stored?level=medium` — HTML attribute | `/stored?level=hard` — JavaScript string |
+| DOM-based XSS | `/dom?level=easy` — fragment to HTML | `/dom?level=medium` — fragment to attribute | `/dom?level=hard` — decoded query to HTML |
+
+Choose any level from the lab home page or switch levels using the navigation on each challenge page.
 
 Use a harmless payload such as `<script>alert('XSS')</script>` to confirm execution in this local lab. For the DOM challenge, an event-handler payload can be used in a controlled local browser, e.g. `#<img src=x onerror=alert('DOM-XSS')>`.
 

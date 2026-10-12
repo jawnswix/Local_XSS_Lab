@@ -1,9 +1,29 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Reflected XSS</title><link rel="stylesheet" href="/style.css"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Reflected XSS</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/levels.css"></head>
 <body><main class="wrap">
-  <a href="/">← Lab home</a><p class="eyebrow">CHALLENGE 01</p><h1>Reflected XSS</h1>
-  <p>Search for a training term. The page reflects the <code>q</code> parameter into HTML without output encoding.</p>
-  <form method="GET" action="/reflected"><label for="q">Search term</label><input id="q" name="q" value="<%= q %>" placeholder="Try hello"><button>Search</button></form>
-  <section class="result"><h2>Search results for:</h2><div class="unsafe-output"><%- q %></div></section>
-  <details><summary>Learning notes</summary><p>Compare the safely encoded input field (<code>&lt;%= q %&gt;</code>) with the deliberately unsafe output (<code>&lt;%- q %&gt;</code>). Try a harmless payload such as <code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code> in the search field.</p></details>
+  <a href="/">← Lab home</a><p class="eyebrow">REFLECTED XSS</p><div class="level-badge <%= level %>"><%= level %> level</div><h1>Reflected XSS</h1>
+  <nav class="level-nav" aria-label="Reflected XSS difficulty levels">
+    <a class="<%= level === 'easy' ? 'selected' : '' %>" href="/reflected?level=easy">Easy</a>
+    <a class="<%= level === 'medium' ? 'selected' : '' %>" href="/reflected?level=medium">Medium</a>
+    <a class="<%= level === 'hard' ? 'selected' : '' %>" href="/reflected?level=hard">Hard</a>
+  </nav>
+  <% if (level === "easy") { %>
+    <p><strong>Objective:</strong> trace a query parameter reflected directly into an HTML body.</p>
+  <% } else if (level === "medium") { %>
+    <p><strong>Objective:</strong> inspect how a query parameter is inserted into a quoted HTML attribute.</p>
+  <% } else { %>
+    <p><strong>Objective:</strong> trace a query parameter into a JavaScript string in the response.</p>
+  <% } %>
+  <form method="GET" action="/reflected"><input type="hidden" name="level" value="<%= level %>"><label for="q">Search term</label><input id="q" name="q" value="<%= q %>" placeholder="Try hello"><button>Search</button></form>
+  <section class="result"><h2>Search result</h2>
+    <% if (level === "easy") { %>
+      <div class="unsafe-output"><%- q %></div>
+    <% } else if (level === "medium") { %>
+      <div class="unsafe-output" data-search="<%- q %>"><%= q %></div>
+    <% } else { %>
+      <div id="hard-output" class="unsafe-output">Search term is assigned from the response script.</div>
+      <script>document.getElementById("hard-output").textContent = '<%- q %>';</script>
+    <% } %>
+  </section>
+  <details><summary>Learning notes</summary><p>Each level uses an intentionally unsafe output context. Compare HTML body, HTML attribute, and JavaScript string contexts, then explain how each should be safely handled. Use harmless proof-of-execution payloads only.</p></details>
 </main></body></html>
