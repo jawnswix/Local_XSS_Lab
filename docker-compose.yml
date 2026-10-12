@@ -1,0 +1,8 @@
+services:
+  xss-lab:
+    build: .
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./lab-data:/app/lab-data
+    restart: "no"

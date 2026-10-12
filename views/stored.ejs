@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Stored XSS</title><link rel="stylesheet" href="/style.css"></head>
+<body><main class="wrap">
+  <a href="/">← Lab home</a><p class="eyebrow">CHALLENGE 02</p><h1>Stored XSS</h1>
+  <p>Comments are saved to a local SQLite database and displayed on this page.</p>
+  <form method="POST" action="/stored"><label for="body">Comment</label><textarea id="body" name="body" maxlength="2000" rows="4" placeholder="Write a training comment"></textarea><button>Save comment</button></form>
+  <form method="POST" action="/reset" class="reset" onsubmit="return confirm('Delete all lab comments?')"><button class="secondary">Reset comments</button></form>
+  <h2>Saved comments</h2>
+  <% if (!comments.length) { %><p class="muted">No comments yet.</p><% } %>
+  <% comments.forEach(comment => { %>
+    <article class="comment"><p><%- comment.body %></p><small>Saved: <%= comment.created_at %></small></article>
+  <% }) %>
+  <details><summary>Learning notes</summary><p>This route intentionally renders saved comments as raw HTML. A harmless test payload is <code>&lt;script&gt;alert('Stored XSS')&lt;/script&gt;</code>. Reset comments after testing.</p></details>
+</main></body></html>

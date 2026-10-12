@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Reflected XSS</title><link rel="stylesheet" href="/style.css"></head>
+<body><main class="wrap">
+  <a href="/">← Lab home</a><p class="eyebrow">CHALLENGE 01</p><h1>Reflected XSS</h1>
+  <p>Search for a training term. The page reflects the <code>q</code> parameter into HTML without output encoding.</p>
+  <form method="GET" action="/reflected"><label for="q">Search term</label><input id="q" name="q" value="<%= q %>" placeholder="Try hello"><button>Search</button></form>
+  <section class="result"><h2>Search results for:</h2><div class="unsafe-output"><%- q %></div></section>
+  <details><summary>Learning notes</summary><p>Compare the safely encoded input field (<code>&lt;%= q %&gt;</code>) with the deliberately unsafe output (<code>&lt;%- q %&gt;</code>). Try a harmless payload such as <code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code> in the search field.</p></details>
+</main></body></html>
